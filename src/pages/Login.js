@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import apiService from '../services/api';
+import apiService from '../services/mockApiService';
 
 const Login = () => {
   const [email, setEmail] = useState('');

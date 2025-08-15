@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Building, Calendar, Phone, MapPin, Pound, Briefcase } from 'lucide-react';
-import apiService from '../services/api';
+import apiService from '../services/mockApiService';
 
 const EmployeeForm = ({ employee = null, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({

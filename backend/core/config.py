@@ -4,7 +4,7 @@ import os
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "postgresql://hr_user:hr_password@localhost/hr_dashboard"
+    DATABASE_URL: str = "sqlite:///./hr_dashboard.db"
     
     # Security
     SECRET_KEY: str = "your-secret-key-here-change-in-production"

@@ -26,7 +26,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import apiService from '../services/api';
+import apiService from '../services/mockApiService';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -85,6 +85,23 @@ const Dashboard = () => {
           time: 'Just now',
         });
       }
+
+      // Add more realistic alerts
+      newAlerts.push({
+        id: 3,
+        type: 'warning',
+        title: 'Documents Expiring Soon',
+        message: '3 employee documents expire within 30 days',
+        time: '2 hours ago',
+      });
+
+      newAlerts.push({
+        id: 4,
+        type: 'info',
+        title: 'Training Completion',
+        message: 'Emma Davis completed React Development course',
+        time: '4 hours ago',
+      });
 
       setAlerts(newAlerts);
     } catch (error) {

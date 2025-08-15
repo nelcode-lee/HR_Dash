@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import apiService from '../services/mockApiService';
 import {
   BarChart3,
   Download,
@@ -89,22 +90,48 @@ const Reports = () => {
     { month: 'Aug', hires: 16, terminations: 2, net: 14 },
   ];
 
-  const departmentData = [
+  const [departmentData, setDepartmentData] = useState([
     { name: 'Engineering', count: 45, percentage: 30 },
     { name: 'Sales', count: 30, percentage: 20 },
     { name: 'Marketing', count: 25, percentage: 17 },
     { name: 'HR', count: 8, percentage: 5 },
     { name: 'Finance', count: 12, percentage: 8 },
     { name: 'Operations', count: 30, percentage: 20 },
-  ];
+  ]);
 
-  const performanceData = [
-    { rating: '5 - Excellent', count: 25, percentage: 17 },
-    { rating: '4 - Good', count: 65, percentage: 43 },
-    { rating: '3 - Average', count: 45, percentage: 30 },
-    { rating: '2 - Below Average', count: 12, percentage: 8 },
-    { rating: '1 - Poor', count: 3, percentage: 2 },
-  ];
+  useEffect(() => {
+    loadDepartmentData();
+  }, []);
+
+  const loadDepartmentData = async () => {
+    try {
+      const stats = await apiService.getDashboardStats();
+      setDepartmentData(stats.department_distribution);
+    } catch (error) {
+      console.error('Error loading department data:', error);
+    }
+  };
+
+  const [performanceData, setPerformanceData] = useState([
+    { rating: 'Outstanding', count: 15, percentage: 10 },
+    { rating: 'Exceeds Expectations', count: 42, percentage: 27 },
+    { rating: 'Meets Expectations', count: 78, percentage: 50 },
+    { rating: 'Needs Improvement', count: 18, percentage: 12 },
+    { rating: 'Unsatisfactory', count: 3, percentage: 2 },
+  ]);
+
+  useEffect(() => {
+    loadPerformanceData();
+  }, []);
+
+  const loadPerformanceData = async () => {
+    try {
+      const stats = await apiService.getDashboardStats();
+      setPerformanceData(stats.performance_ratings);
+    } catch (error) {
+      console.error('Error loading performance data:', error);
+    }
+  };
 
   const getColorClass = (color) => {
     const colorMap = {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, User, FileText, Clock } from 'lucide-react';
-import apiService from '../services/api';
+import apiService from '../services/mockApiService';
 
 const AbsenceForm = ({ absence = null, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
