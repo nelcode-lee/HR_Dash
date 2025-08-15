@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import apiService from '../services/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -14,8 +16,14 @@ const Login = () => {
     if (!email || !password) return;
 
     setLoading(true);
+    setError('');
+    
     try {
-      await login(email, password);
+      // Use real API login
+      const response = await apiService.login(email, password);
+      await login(response.access_token);
+    } catch (err) {
+      setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -83,6 +91,13 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Error Display */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <label className="flex items-center">
                 <input
@@ -110,7 +125,9 @@ const Login = () => {
             <p className="text-sm text-gray-600 mb-2">Demo Credentials:</p>
             <p className="text-xs text-gray-500">
               Email: admin@company.com<br />
-              Password: Any password will work
+              Password: admin123<br />
+              <br />
+              <span className="text-gray-400">Note: You'll need to register first or create a user in the database</span>
             </p>
           </div>
         </div>

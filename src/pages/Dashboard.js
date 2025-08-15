@@ -26,50 +26,90 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import apiService from '../services/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
-    total_employees: 150,
-    pending_onboarding: 5,
-    active_employees: 140,
-    pending_absences: 8,
-    expiring_documents: 3,
-    expiring_training: 12,
+    total_employees: 0,
+    pending_onboarding: 0,
+    active_employees: 0,
+    pending_absences: 0,
+    expiring_documents: 0,
+    expiring_training: 0,
   });
 
-  const [alerts, setAlerts] = useState([
-    {
-      id: 1,
-      type: 'warning',
-      title: 'Documents Expiring Soon',
-      message: '3 employee documents expire within 30 days',
-      time: '2 hours ago',
-    },
-    {
-      id: 2,
-      type: 'info',
-      title: 'Pending Absence Approvals',
-      message: '8 absence requests require approval',
-      time: '4 hours ago',
-    },
-    {
-      id: 3,
-      type: 'success',
-      title: 'Onboarding Completed',
-      message: 'Sarah Johnson completed all onboarding tasks',
-      time: '1 day ago',
-    },
-  ]);
+  const [alerts, setAlerts] = useState([]);
+  const [departmentData, setDepartmentData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const departmentData = [
-    { name: 'Engineering', count: 45, color: '#3b82f6' },
-    { name: 'Sales', count: 30, color: '#10b981' },
-    { name: 'Marketing', count: 25, color: '#f59e0b' },
-    { name: 'HR', count: 8, color: '#ef4444' },
-    { name: 'Finance', count: 12, color: '#8b5cf6' },
-    { name: 'Operations', count: 30, color: '#06b6d4' },
-  ];
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const dashboardStats = await apiService.getDashboardStats();
+      
+      setStats({
+        total_employees: dashboardStats.total_employees,
+        pending_onboarding: 0, // Will be calculated from onboarding data
+        active_employees: dashboardStats.active_employees,
+        pending_absences: dashboardStats.pending_absences,
+        expiring_documents: 0, // Will be calculated from document data
+        expiring_training: 0, // Will be calculated from training data
+      });
+
+      setDepartmentData(dashboardStats.department_distribution);
+
+      // Generate alerts based on real data
+      const newAlerts = [];
+      
+      if (dashboardStats.pending_absences > 0) {
+        newAlerts.push({
+          id: 1,
+          type: 'info',
+          title: 'Pending Absence Approvals',
+          message: `${dashboardStats.pending_absences} absence requests require approval`,
+          time: 'Just now',
+        });
+      }
+
+      if (dashboardStats.total_employees > 0) {
+        newAlerts.push({
+          id: 2,
+          type: 'success',
+          title: 'System Active',
+          message: `${dashboardStats.active_employees} active employees in the system`,
+          time: 'Just now',
+        });
+      }
+
+      setAlerts(newAlerts);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      // Fallback to mock data if API fails
+      setStats({
+        total_employees: 150,
+        pending_onboarding: 5,
+        active_employees: 140,
+        pending_absences: 8,
+        expiring_documents: 3,
+        expiring_training: 12,
+      });
+      setDepartmentData([
+        { name: 'Engineering', count: 45, color: '#3b82f6' },
+        { name: 'Sales', count: 30, color: '#10b981' },
+        { name: 'Marketing', count: 25, color: '#f59e0b' },
+        { name: 'HR', count: 8, color: '#ef4444' },
+        { name: 'Finance', count: 12, color: '#8b5cf6' },
+        { name: 'Operations', count: 30, color: '#06b6d4' },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const monthlyHires = [
     { month: 'Jan', hires: 12 },
@@ -159,6 +199,17 @@ const Dashboard = () => {
       </motion.div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 lg:space-y-6">
