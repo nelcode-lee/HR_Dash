@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Building, Calendar, Phone, MapPin, DollarSign, Briefcase } from 'lucide-react';
+import { User, Building, Calendar, Phone, MapPin, PoundSterling, Briefcase } from 'lucide-react';
 import apiService from '../services/mockApiService';
 
 const EmployeeForm = ({ employee = null, onSubmit, onCancel }) => {
@@ -298,7 +298,7 @@ const EmployeeForm = ({ employee = null, onSubmit, onCancel }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              <DollarSign className="inline w-4 h-4 mr-2" />
+              <PoundSterling className="inline w-4 h-4 mr-2" />
               Salary
             </label>
             <input
@@ -307,7 +307,7 @@ const EmployeeForm = ({ employee = null, onSubmit, onCancel }) => {
               value={formData.salary}
               onChange={handleChange}
               className="input-field w-full"
-              placeholder="$45,000"
+              placeholder="£45,000"
               step="0.01"
               min="0"
             />
