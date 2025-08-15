@@ -27,6 +27,7 @@ import {
   Cell,
 } from 'recharts';
 import apiService from '../services/mockApiService';
+import EmployeeForm from '../components/EmployeeForm';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);
   const [departmentData, setDepartmentData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showEmployeeForm, setShowEmployeeForm] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -126,6 +128,22 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddEmployee = () => {
+    setShowEmployeeForm(true);
+  };
+
+  const handleEmployeeFormSubmit = async () => {
+    setShowEmployeeForm(false);
+    // Refresh dashboard data to show new employee
+    await loadDashboardData();
+    // Show success message
+    alert('Employee added successfully! Dashboard has been updated.');
+  };
+
+  const handleEmployeeFormCancel = () => {
+    setShowEmployeeForm(false);
   };
 
   const monthlyHires = [
@@ -241,7 +259,10 @@ const Dashboard = () => {
             <FileText className="w-4 h-4 mr-2" />
             Export Report
           </button>
-          <button className="btn-primary text-sm">
+          <button 
+            onClick={handleAddEmployee}
+            className="btn-primary text-sm"
+          >
             <Users className="w-4 h-4 mr-2" />
             Add Employee
           </button>
@@ -368,7 +389,7 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             <button 
-              onClick={() => navigate('/employees')}
+              onClick={handleAddEmployee}
               className="p-3 lg:p-4 bg-primary-50 hover:bg-primary-100 rounded-lg border border-primary-200 transition-colors duration-200"
             >
               <Users className="w-5 h-5 lg:w-6 lg:h-6 text-primary-600 mx-auto mb-2" />
@@ -398,6 +419,18 @@ const Dashboard = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Employee Form Modal */}
+      {showEmployeeForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <EmployeeForm
+              onSubmit={handleEmployeeFormSubmit}
+              onCancel={handleEmployeeFormCancel}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
